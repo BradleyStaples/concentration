@@ -1,27 +1,31 @@
 {
-  "name": "remember-the-ginger",
-  "version": "1.0.0",
+  "name": "concentration",
+  "version": "0.1.0",
   "private": true,
-  "description": "Remember The Ginger",
-  "author": "Bradley Staples",
-  "keywords": [
-    "gatsby"
-  ],
   "scripts": {
-    "develop": "gatsby develop",
-    "start": "gatsby develop",
-    "build": "gatsby build",
-    "serve": "gatsby serve",
-    "clean": "gatsby clean"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
   },
   "dependencies": {
-    "classnames": "^2.3.1",
-    "gatsby": "^3.13.0",
-    "gatsby-plugin-react-helmet": "^4.13.0",
-    "gatsby-plugin-sass": "^4.13.0",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "react-helmet": "^6.1.0",
-    "sass": "^1.39.0"
+    "classnames": "^2.5.1",
+    "next": "16.2.4",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "spinners-react": "^1.0.11"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.4",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.8.3",
+    "prettier-plugin-tailwindcss": "^0.8.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }
