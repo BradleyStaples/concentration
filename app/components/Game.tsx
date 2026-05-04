@@ -140,18 +140,24 @@ export default function Game() {
     );
   }
 
-  const overlayClasses = classnames({overlay: true, hidden: !showOverlay});
+  const overlayClasses = classnames({
+    overlay: true,
+    'p-4': true,
+    hidden: !showOverlay,
+  });
 
   return (
     <div>
-      <input
-        type='button'
-        className='button'
-        value={buttonLabel}
-        onClick={buttonHandler}
-        disabled={buttonLabel === 'Game Over'}
-      />
-      <div className='cardframe'>
+      <div className='pb-4'>
+        <input
+          type='button'
+          className='button'
+          value={buttonLabel}
+          onClick={buttonHandler}
+          disabled={buttonLabel === 'Game Over'}
+        />
+      </div>
+      <div className='cardframe grid grid-cols-8 content-start justify-between gap-4 p-4'>
         {shuffledDeck.length > 0 &&
           shuffledDeck.map((card, index) => {
             return (

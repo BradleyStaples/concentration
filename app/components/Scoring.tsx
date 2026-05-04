@@ -24,9 +24,17 @@ const Scoring = ({
 
   return (
     <div className={scoreClasses}>
-      <span className='clicks'>{counter(numClicks, 'click', 'clicks')}</span>
-      <span className='matches'>{counter(numMatches, 'match', 'matches')}</span>
-      <span className='time'>{counter(numSeconds, 'second', 'seconds')}</span>
+      <div className='flex content-start justify-center'>
+        <span className='clicks flex-1'>
+          {counter(numClicks, 'click', 'clicks')}
+        </span>
+        <span className='matches flex-1'>
+          {counter(numMatches, 'match', 'matches')}
+        </span>
+        <span className='time flex-1'>
+          {counter(numSeconds, 'second', 'seconds')}
+        </span>
+      </div>
       <span className='stats'>{endStats}</span>
     </div>
   );

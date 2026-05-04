@@ -1,12 +1,11 @@
 import type {Metadata} from 'next';
-import {Geist, Geist_Mono} from 'next/font/google';
+import {Arapey} from 'next/font/google';
 import './globals.css';
 import './game.css';
 
-const geistSans = Geist({variable: '--font-geist-sans', subsets: ['latin']});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const arapey = Arapey({
+  variable: '--font-arapey',
+  weight: '400',
   subsets: ['latin'],
 });
 
@@ -24,11 +23,7 @@ export default function RootLayout({
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script src='http://localhost:8097'></script>
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
+      <body className={`${arapey.variable} antialiased`}>{children}</body>
     </html>
   );
 }

@@ -1,30 +1,29 @@
-/* - - - - - BASE STRUCTURE - - - - - */
-* {
-  outline: none;
-}
-
-html {
-  box-sizing: border-box;
-}
-
-*,
-*:before,
-*:after {
-  box-sizing: inherit;
+:root {
+  --background: rgb(59, 103, 158);
+  --action: #d5cc27;
+  --action-hover: hsl(from var(--action) h s calc(l + 10));
+  --text-light: #fff;
+  --text-light-variant: hsl(from var(--text-light) h s calc(l - 10));
+  --text-dark: #333;
+  --text-dark-variant: hsl(from var(--text-dark) h s calc(l - 10));
+  --play-area-height: 640px;
+  --play-area-width: 1024px;
+  --card-width: 105px;
+  --card-height: 130px;
+  --card-shadow: #555;
+  --card-bg-main: #36c;
+  --card-bg-secondary: rgba(255, 255, 255, 0.8);
 }
 
 body {
   font:
     20px/30px 'Arapey',
     serif;
-  color: #fff;
+  color: var(--text-light);
   text-align: center;
-}
-
-.wrapper {
   min-height: 100vh;
   padding-bottom: 15px;
-  background: rgb(59, 103, 158);
+  background: var(--background);
   background: linear-gradient(
     to bottom,
     rgba(59, 103, 158, 1) 0%,
@@ -35,70 +34,24 @@ body {
   background-repeat: no-repeat;
 }
 
-/* - - - - - BASE TAGS AND CLASSES - - - - - */
 h1 {
   font:
     40px/50px 'Arapey',
     sans-serif;
-  text-shadow: 0 3px 3px #000;
-}
-
-h2 {
-  font:
-    30px/40px 'Arapey',
-    sans-serif;
-  text-shadow: 0 1px 1px #000;
-}
-
-.desc {
-  width: 820px;
-  margin: 10px auto;
-  line-height: 25px;
-  text-align: center;
-}
-
-hr {
-  width: 820px;
-  height: 0;
-  margin: 0 auto;
-  border-top: 1px solid #eee;
-  border-bottom: 1px solid #888;
+  text-shadow: 0 3px 3px var(--text-dark-variant);
 }
 
 a,
 a:link {
   text-decoration: none;
-  color: #222;
+  color: var(--action);
   font-weight: bold;
+  text-shadow: none;
 }
 
 a:hover {
-  color: #333;
+  color: var(--action-hover);
   text-decoration: underline;
-}
-
-a.credit {
-  padding: 8px 3px;
-  border-radius: 20px;
-  transition: all 1s ease-in-out;
-}
-
-a.credit:hover {
-  background: #fff;
-  text-decoration: none;
-}
-
-a img {
-  border: none;
-}
-
-.clearfix:before {
-  content: ' ';
-  display: table;
-}
-
-.clearfix:after {
-  clear: both;
 }
 
 .hidden {
@@ -108,9 +61,7 @@ a img {
 /* - - - - - CARDS - - - - - */
 .cardframe {
   position: relative;
-  width: 921px;
-  margin: 15px auto;
-  text-align: center;
+  min-width: var(--play-area-width);
 }
 
 .overlay {
@@ -118,9 +69,9 @@ a img {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: var(--play-area-height);
   z-index: 10;
-  background: #333;
+  background: var(--text-dark);
   border-radius: 15px;
 
   &::after {
@@ -129,12 +80,10 @@ a img {
     left: 0;
     display: block;
     width: 100%;
-    height: 100%;
     content: 'PAUSED';
     font:
       100px/100px 'Arapey',
       sans-serif;
-    text-align: center;
   }
 
   &.hidden {
@@ -143,20 +92,13 @@ a img {
 }
 
 .cardButton {
-  display: inline-block;
-  width: 105px;
-  height: 130px;
-  margin: 5px;
-  padding: 0;
-  border: none;
-  -webkit-appearance: none;
-  appearance: none;
-  background: transparent;
+  width: var(--card-width);
+  height: var(--card-height);
 }
 
 .cardframe .card {
   position: relative;
-  height: 130px;
+  height: var(--card-height);
 }
 
 .cardframe .cardfront,
@@ -164,9 +106,9 @@ a img {
   height: 100%;
   width: 100%;
   padding: 4px;
-  border: 1px solid #555;
+  border: 1px solid var(--card-shadow);
   border-radius: 15px;
-  box-shadow: 0 0 5px 1px #000;
+  box-shadow: 0 0 5px 1px var(--text-dark);
   position: absolute;
   transform: rotateY(0deg);
   transform-style: preserve-3d;
@@ -174,50 +116,43 @@ a img {
   transition: all 0.75s ease-in-out;
 }
 
-.cardframe .cardfront,
-.cardframe .cardback {
-  background: #ccc;
-  background: radial-gradient(#fff 0%, #ccc 100%);
+.cardframe .cardfront {
+  background: var(--text-light-variant);
+  background: radial-gradient(
+    var(--text-light) 0%,
+    var(--text-light-variant) 100%
+  );
   background: radial-gradient(
     ellipse farthest-side at center center,
-    #fff 0%,
-    #ccc 100%
+    var(--text-light) 0%,
+    var(--text-light-variant) 100%
   );
 }
 
 .cardframe .cardback {
   /* background from https://projects.verou.me/css3patterns/#half-rombes */
-  background: #36c;
+  background: var(--card-bg-main);
   background:
-    linear-gradient(115deg, transparent 75%, rgba(255, 255, 255, 0.8) 75%) 0 0,
-    linear-gradient(245deg, transparent 75%, rgba(255, 255, 255, 0.8) 75%) 0 0,
-    linear-gradient(115deg, transparent 75%, rgba(255, 255, 255, 0.8) 75%)
+    linear-gradient(115deg, transparent 75%, var(--card-bg-secondary) 75%) 0 0,
+    linear-gradient(245deg, transparent 75%, var(--card-bg-secondary) 75%) 0 0,
+    linear-gradient(115deg, transparent 75%, var(--card-bg-secondary) 75%)
       7px -15px,
     linear-gradient(245deg, transparent 75%, rgba(255, 255, 255, 0.8) 75%)
       7px -15px,
-    #36c;
+    var(--card-bg-main);
   background-size: 15px 30px;
 }
 
-.cardframe .facedown .cardfront {
+.cardframe .facedown .cardfront,
+.cardframe .faceup .cardback {
   z-index: -5;
   transform: rotateY(180deg);
 }
 
 .cardframe .facedown .cardback,
-.cardframe .facedown .cardback:before {
-  z-index: 10;
-  transform: rotateY(0deg);
-}
-
 .cardframe .faceup .cardfront {
   z-index: 10;
   transform: rotateY(0deg);
-}
-
-.cardframe .faceup .cardback {
-  z-index: -5;
-  transform: rotateY(180deg);
 }
 
 .cardframe .face,
@@ -252,7 +187,6 @@ a img {
   color: #000;
 }
 
-/* - - - - - STARTING DECK OF CARDS - - - - - */
 .deck {
   position: relative;
   width: 270px;
@@ -263,77 +197,63 @@ a img {
 .deck .card {
   position: absolute;
   top: 30px;
-  width: 105px;
-  height: 130px;
+  width: var(--card-width);
+  height: var(--card-height);
   margin: 5px;
   padding: 4px;
-  border: 1px solid #555;
+  border: 1px solid var(--card-shadow);
   border-radius: 15px;
-  box-shadow: 0 0 0 1px #000;
+  box-shadow: 0 0 0 1px var(--text-dark);
   /* background from https://projects.verou.me/css3patterns/#half-rombes */
-  background: #36c;
+  background: var(--card-bg-main);
   background:
-    linear-gradient(115deg, transparent 75%, rgba(255, 255, 255, 0.8) 75%) 0 0,
-    linear-gradient(245deg, transparent 75%, rgba(255, 255, 255, 0.8) 75%) 0 0,
-    linear-gradient(115deg, transparent 75%, rgba(255, 255, 255, 0.8) 75%)
+    linear-gradient(115deg, transparent 75%, var(--card-bg-secondary) 75%) 0 0,
+    linear-gradient(245deg, transparent 75%, var(--card-bg-secondary) 75%) 0 0,
+    linear-gradient(115deg, transparent 75%, var(--card-bg-secondary) 75%)
       7px -15px,
     linear-gradient(245deg, transparent 75%, rgba(255, 255, 255, 0.8) 75%)
       7px -15px,
-    #36c;
+    var(--card-bg-main);
   background-size: 15px 30px;
 }
 
-/* - - - - - STATISTICSS AND STATES - - - - - */
 .score {
-  width: 600px;
+  width: var(--play-area-height);
   margin: 15px auto 0;
-  text-align: center;
   font-weight: bold;
 }
 
 .clicks {
-  float: left;
   text-align: left;
 }
 
 .matches {
-  float: right;
-  text-align: right;
+  text-align: center;
 }
 
 .time {
-  text-align: center;
+  text-align: right;
 }
 
 .stats {
-  clear: both;
   text-align: center;
-  display: block;
-  width: 100%;
 }
 
 .button {
   padding: 6px 10px;
-  border: 1px solid #999;
-  border-radius: 3px;
+  border: 1px solid var(--action-hover);
+  border-radius: 5px;
   font-weight: bold;
-  text-shadow: 0 1px 1px #fff;
-  background: linear-gradient(#fff, #e0e0e0);
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.25),
-    inset 0 0 3px #fff;
-  color: #333;
-  white-space: nowrap;
-  vertical-align: middle;
+  text-shadow: 0 1px 1px var(--text-light);
+  background: linear-gradient(var(--action-hover), var(--action));
+  color: var(--text-dark);
   cursor: pointer;
+  text-transform: uppercase;
 }
 
 .button:hover,
 .button:focus,
 .button:active {
-  border: 1px solid #aaa;
-  border-bottom-color: #ccc;
-  border-top-color: #999;
-  box-shadow: inset 0 1px 2px #aaa;
-  background: linear-gradient(#e0e0e0, #fff);
+  border: 1px solid var(--action);
+  background: linear-gradient(var(--action), var(--action-hover));
 }

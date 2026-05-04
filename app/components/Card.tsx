@@ -42,9 +42,8 @@ export default function Card({
     card: true,
     facedown: !isFaceup,
     faceup: isFaceup,
-    // @TODO: no type coercion, use enum or something
-    black: (color as string) === 'Black',
-    red: (color as string) === 'Red',
+    black: color === 'Black',
+    red: color === 'Red',
   });
 
   return (
