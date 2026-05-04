@@ -1,22 +1,27 @@
 'use client';
-import {useState, useRef, useEffect} from 'react';
+import {useState} from 'react';
 import classnames from 'classnames';
 
 import Card from './Card';
 import Scoring from './Scoring';
 import useInterval from '../hooks/useInterval';
+import type {BaseCard, CardHistory} from '../utils/types';
 import shuffle from '../utils/shuffle';
 import spread from '../utils/spread';
 
-export default function Game() {
-  const shuffledDeck = useRef();
-  const secondsCounter = useRef();
+// TODOs:
+// - remove bad usages of refs littered throughout
+// - redo CSS more or less from scratch? save colors and such, use css grid
+// - make a `deal` utility that animates from `spread` to css grid
+// - prevent multiple pairs from being revealed at once
+// - rework `Card` to handle more state internally
+// - card flip animation hides card front too quickly, fix
+// - make 404 route
 
-  if (!shuffledDeck.current) {
-    // store the deck in a ref so it only gets shuffled once, not once per render
-    shuffledDeck.current = shuffle();
-    spread(shuffledDeck.current);
-  }
+export default function Game() {
+  const getPrecision = (value: number, precision: number = 2) => {
+    return parseFloat(value.toFixed(precision));
+  };
 
   const [gameStarted, setGameStarted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -26,68 +31,64 @@ export default function Game() {
   const [numSeconds, setNumSeconds] = useState(0);
   const [numMatches, setNumMatches] = useState(0);
   const [endStats, setEndStats] = useState('');
-  const [cardHistory, setCardHistory] = useState([]);
+  const [cardHistory, setCardHistory] = useState<CardHistory[]>([]);
+  const [shuffledDeck, setShuffledDeck] = useState<BaseCard[]>([]);
 
-  useEffect(() => {
-    if (!isPlaying) {
-      clearInterval(secondsCounter.current);
-      secondsCounter.current = null;
-    }
-  }, [isPlaying]);
+  // only shuffle deck once, not once per render
+  if (shuffledDeck.length === 0) {
+    const shuffled = shuffle();
+    const spreaded = spread(shuffled);
+    setShuffledDeck(spreaded);
+  }
 
-  useEffect(() => {
-    let ctm = ((numMatches / numClicks) * 100).toFixed(2);
-    if (isNaN(ctm) && numClicks === 0) {
-      ctm = 0.0;
-    }
-    let cps = (numClicks / numSeconds).toFixed(2);
-    if (isNaN(cps) && numSeconds === 0) {
-      cps = 0.0;
-    }
-    let template = `${ctm}% click-to-match ratio | ${cps} clicks per second`;
+  let clicksToMatches = getPrecision((numMatches / numClicks) * 100);
+  if (isNaN(clicksToMatches) && numClicks === 0) {
+    clicksToMatches = 0.0;
+  }
+  let clicksPerSecond = getPrecision(numClicks / numSeconds);
+  if (isNaN(clicksPerSecond) && numSeconds === 0) {
+    clicksPerSecond = 0.0;
+  }
+  const template = `${clicksToMatches}% click-to-match ratio | ${clicksPerSecond} clicks per second`;
+  if (template !== endStats) {
     setEndStats(template);
-  }, [numClicks, numSeconds, numMatches]);
+  }
 
-  useEffect(() => {
-    if (numMatches === shuffledDeck.current.length / 2) {
-      // game is over, all matches found
-      setIsPlaying(false);
-      setButtonLabel('Game Over');
-    }
-  }, [numMatches]);
+  if (isPlaying && numMatches === shuffledDeck.length / 2) {
+    // game is over, all matches found
+    setIsPlaying(false);
+    setButtonLabel('Game Over');
+  }
 
-  useEffect(() => {
-    if (cardHistory.length === 2) {
-      // compare new card to existing card for a match
-      let oldCard = cardHistory[0];
-      let newCard = cardHistory[1];
-      if (oldCard.suit === newCard.suit && oldCard.face === newCard.face) {
-        setNumMatches((numMatches) => numMatches + 1);
-      } else {
-        // not a match, flip cards back down
-        // TODO: this is hacky and I don't like it. game.js should maybe manage faceup state of all cards?
-        setTimeout(() => {
-          oldCard.setIsFaceup(false);
-          newCard.setIsFaceup(false);
-        }, 1500);
-      }
-      //
-      // reset history
-      setCardHistory([]);
+  if (cardHistory.length === 2) {
+    // compare new card to existing card for a match
+    const oldCard = cardHistory[0];
+    const newCard = cardHistory[1];
+    if (oldCard.suit === newCard.suit && oldCard.face === newCard.face) {
+      setNumMatches((numMatches) => numMatches + 1);
+    } else {
+      // not a match, flip cards back down
+      // TODO: this is hacky and I don't like it
+      setTimeout(() => {
+        oldCard.setIsFaceup(false);
+        newCard.setIsFaceup(false);
+      }, 1500);
     }
-  }, [cardHistory]);
+    // reset history
+    setCardHistory([]);
+  }
 
   const clickIncrementor = () => {
     setNumClicks(numClicks + 1);
   };
 
-  const updateCardHistory = (card) => {
+  const updateCardHistory = (newHistory: CardHistory) => {
     if (cardHistory.length <= 1) {
-      setCardHistory((cardHistory) => cardHistory.concat(card));
+      setCardHistory((cardHistory) => cardHistory.concat(newHistory));
     }
   };
 
-  const buttonHandler = (event) => {
+  const buttonHandler = () => {
     if (!gameStarted) {
       setGameStarted(true);
     }
@@ -103,16 +104,41 @@ export default function Game() {
     setIsPlaying((isPlaying) => !isPlaying);
   };
 
-  secondsCounter.current = useInterval(
+  useInterval(
     () => {
       setNumSeconds((numSeconds) => numSeconds + 1);
     },
     isPlaying ? 1000 : null,
   );
 
-  const cardFrameClasses = classnames({cardframe: true, hidden: !gameStarted});
-
-  const deckClasses = classnames({deck: true, hidden: gameStarted});
+  if (!gameStarted) {
+    return (
+      <div>
+        <div className='deck'>
+          {shuffledDeck.length > 0 &&
+            shuffledDeck.map((card, index) => {
+              return (
+                <Card
+                  style={card.style}
+                  key={`static-card-${index}`}
+                  isPlaying={false}
+                  face={card.face}
+                  suit={card.suit}
+                  color={card.color}
+                />
+              );
+            })}
+        </div>
+        <input
+          type='button'
+          className='button'
+          value={buttonLabel}
+          onClick={buttonHandler}
+          disabled={buttonLabel === 'Game Over'}
+        />
+      </div>
+    );
+  }
 
   const overlayClasses = classnames({overlay: true, hidden: !showOverlay});
 
@@ -125,9 +151,9 @@ export default function Game() {
         onClick={buttonHandler}
         disabled={buttonLabel === 'Game Over'}
       />
-      <div className={cardFrameClasses}>
-        {shuffledDeck.current &&
-          shuffledDeck.current.map((card, index) => {
+      <div className='cardframe'>
+        {shuffledDeck.length > 0 &&
+          shuffledDeck.map((card, index) => {
             return (
               <Card
                 face={card.face}
@@ -141,12 +167,6 @@ export default function Game() {
             );
           })}
         <div className={overlayClasses}></div>
-      </div>
-      <div className={deckClasses}>
-        {shuffledDeck.current &&
-          shuffledDeck.current.map((card, index) => {
-            return <Card style={card.style} key={`static-card-${index}`} />;
-          })}
       </div>
       <Scoring
         gameStarted={gameStarted}

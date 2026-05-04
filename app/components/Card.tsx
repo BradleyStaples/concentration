@@ -1,21 +1,12 @@
-import type {CSSProperties, Dispatch, MouseEvent, SetStateAction} from 'react';
+import type {MouseEvent} from 'react';
 import {useState} from 'react';
 import classnames from 'classnames';
+import type {BaseCard, CardHistory} from '../utils/types';
 
-interface CardHistory {
-  suit: string;
-  face: string;
-  setIsFaceup: Dispatch<SetStateAction<boolean>>;
-}
-
-interface Props {
-  face: string;
-  suit: string;
-  color: string;
+interface Props extends BaseCard {
   isPlaying: boolean;
-  style: CSSProperties | undefined;
-  clickIncrementor: () => void;
-  updateCardHistory: ({suit, face, setIsFaceup}: CardHistory) => void;
+  clickIncrementor?: () => void;
+  updateCardHistory?: ({suit, face, setIsFaceup}: CardHistory) => void;
 }
 
 export default function Card({
@@ -35,8 +26,8 @@ export default function Card({
       return false;
     }
     setIsFaceup(true);
-    clickIncrementor();
-    updateCardHistory({suit, face, setIsFaceup});
+    clickIncrementor?.();
+    updateCardHistory?.({suit, face, setIsFaceup});
   };
 
   if (!isPlaying) {
@@ -51,8 +42,9 @@ export default function Card({
     card: true,
     facedown: !isFaceup,
     faceup: isFaceup,
-    black: color === 'black',
-    red: color === 'red',
+    // @TODO: no type coercion, use enum or something
+    black: (color as string) === 'Black',
+    red: (color as string) === 'Red',
   });
 
   return (

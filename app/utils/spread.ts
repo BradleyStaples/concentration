@@ -1,9 +1,9 @@
-import type {DeckCard} from './types';
+import type {BaseCard} from './types';
 
-export default function spread(deck: DeckCard[]) {
+export default function spread(deck: BaseCard[]) {
   const shuffledDeck = deck.map((card, index) => {
-    const left = 5 * index + 'px';
-    const degrees = -15 + index + 'deg';
+    const left = 7 * index + 'px';
+    const degrees = -30 + index * 2 + 'deg';
     card.style = {left, transform: `rotate(${degrees})`};
     return card;
   });
