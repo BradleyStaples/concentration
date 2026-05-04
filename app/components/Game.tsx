@@ -9,13 +9,13 @@ import type {BaseCard, CardHistory} from '../utils/types';
 import shuffle from '../utils/shuffle';
 import spread from '../utils/spread';
 
+export const ANIMATION_DURATION = 1500;
+const ONE_SECOND = 1000;
+
 // TODOs:
-// - remove bad usages of refs littered throughout
-// - redo CSS more or less from scratch? save colors and such, use css grid
 // - make a `deal` utility that animates from `spread` to css grid
 // - prevent multiple pairs from being revealed at once
-// - rework `Card` to handle more state internally
-// - card flip animation hides card front too quickly, fix
+// - rework `Card` to handle more state internally?
 // - make 404 route
 
 export default function Game() {
@@ -68,11 +68,10 @@ export default function Game() {
       setNumMatches((numMatches) => numMatches + 1);
     } else {
       // not a match, flip cards back down
-      // TODO: this is hacky and I don't like it
       setTimeout(() => {
         oldCard.setIsFaceup(false);
         newCard.setIsFaceup(false);
-      }, 1500);
+      }, ANIMATION_DURATION);
     }
     // reset history
     setCardHistory([]);
@@ -108,7 +107,7 @@ export default function Game() {
     () => {
       setNumSeconds((numSeconds) => numSeconds + 1);
     },
-    isPlaying ? 1000 : null,
+    isPlaying ? ONE_SECOND : null,
   );
 
   if (!gameStarted) {
@@ -157,7 +156,14 @@ export default function Game() {
           disabled={buttonLabel === 'Game Over'}
         />
       </div>
-      <div className='cardframe grid grid-cols-8 content-start justify-between gap-4 p-4'>
+      <div
+        className='cardframe grid grid-cols-8 content-start justify-between gap-4 p-4'
+        style={
+          {
+            '--animation-duration': `${(ANIMATION_DURATION / 2 / 1000).toFixed(2)}s`,
+          } as React.CSSProperties
+        }
+      >
         {shuffledDeck.length > 0 &&
           shuffledDeck.map((card, index) => {
             return (
