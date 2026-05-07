@@ -7,6 +7,7 @@
   --text-dark: #333;
   --text-dark-variant: hsl(from var(--text-dark) h s calc(l - 10));
   --play-area-height: 640px;
+  --pause-area-extra-height: 35px;
   --play-area-width: 1024px;
   --card-width: 105px;
   --card-height: 130px;
@@ -70,10 +71,10 @@ a:hover {
   top: 0;
   left: 0;
   width: 100%;
-  height: var(--play-area-height);
+  height: calc(var(--play-area-height) + var(--pause-area-extra-height));
   z-index: 10;
   background: var(--text-dark);
-  border-radius: 15px;
+  border-radius: 10px;
 
   &::after {
     position: relative;
