@@ -14,7 +14,6 @@ const ONE_SECOND = 1000;
 
 // TODOs:
 // - make a `deal` utility that animates from `spread` to css grid
-// - prevent multiple pairs from being revealed at once
 // - rework `Card` to handle more state internally?
 // - make 404 route
 
@@ -31,6 +30,7 @@ export default function Game() {
   const [numSeconds, setNumSeconds] = useState(0);
   const [numMatches, setNumMatches] = useState(0);
   const [endStats, setEndStats] = useState('');
+  const [isDisabled, setIsDisabled] = useState(false);
   const [cardHistory, setCardHistory] = useState<CardHistory[]>([]);
   const [shuffledDeck, setShuffledDeck] = useState<BaseCard[]>([]);
 
@@ -67,10 +67,12 @@ export default function Game() {
     if (oldCard.suit === newCard.suit && oldCard.face === newCard.face) {
       setNumMatches((numMatches) => numMatches + 1);
     } else {
-      // not a match, flip cards back down
+      // not a match; disable while faceup, return to facedown
+      setIsDisabled(true);
       setTimeout(() => {
         oldCard.setIsFaceup(false);
         newCard.setIsFaceup(false);
+        setIsDisabled(false);
       }, ANIMATION_DURATION);
     }
     // reset history
@@ -124,6 +126,7 @@ export default function Game() {
                   face={card.face}
                   suit={card.suit}
                   color={card.color}
+                  disabled={true}
                 />
               );
             })}
@@ -173,6 +176,7 @@ export default function Game() {
                 color={card.color}
                 key={`card-${index}`}
                 isPlaying={isPlaying}
+                disabled={isDisabled}
                 clickIncrementor={clickIncrementor}
                 updateCardHistory={updateCardHistory}
               />

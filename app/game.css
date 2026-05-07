@@ -175,7 +175,8 @@ a:hover {
   cursor: pointer;
 }
 
-.cardframe .card.faceup {
+.cardframe .card.faceup,
+.cardframe .cardButton[disabled] .card.facedown {
   cursor: default;
 }
 

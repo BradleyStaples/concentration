@@ -5,6 +5,7 @@ import {ANIMATION_DURATION} from './Game';
 
 interface Props extends BaseCard {
   isPlaying: boolean;
+  disabled: boolean;
   clickIncrementor?: () => void;
   updateCardHistory?: ({suit, face, setIsFaceup}: CardHistory) => void;
 }
@@ -15,6 +16,7 @@ export default function Card({
   color,
   isPlaying,
   style,
+  disabled,
   clickIncrementor,
   updateCardHistory,
 }: Props) {
@@ -57,12 +59,12 @@ export default function Card({
     card: true,
     facedown: !isFaceup,
     faceup: isFaceup,
-    black: color === 'Black',
-    red: color === 'Red',
+    black: showCardInfo && color === 'Black',
+    red: showCardInfo && color === 'Red',
   });
 
   return (
-    <button className='cardButton' onClick={flipCard}>
+    <button className='cardButton' onClick={flipCard} disabled={disabled}>
       <div className={cardClasses}>
         <div className='cardback'></div>
         <div className='cardfront'>
