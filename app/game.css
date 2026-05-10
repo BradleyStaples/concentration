@@ -98,6 +98,11 @@ a:hover {
   height: var(--card-height);
 }
 
+.cardsWrapper {
+  /* cardsWrapper is both .cardframe and .deck */
+  transition: all 0.25s ease-in-out;
+}
+
 .cardframe .card {
   position: relative;
   height: var(--card-height);
@@ -191,7 +196,7 @@ a:hover {
 
 .deck {
   position: relative;
-  width: 270px;
+  width: 340px;
   height: 200px;
   margin: 0 auto;
 }
