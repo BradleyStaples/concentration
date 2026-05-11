@@ -1,7 +1,7 @@
 import {type MouseEvent, useLayoutEffect, useState} from 'react';
 import classnames from 'classnames';
 import type {BaseCard, CardHistory} from '../utils/types';
-import {ANIMATION_DURATION} from './Game';
+import {ANIMATION_DURATION} from '../utils/constants';
 
 interface Props extends BaseCard {
   isPlaying: boolean;
@@ -29,13 +29,12 @@ export default function Card({
         setShowCardInfo(false);
       }, ANIMATION_DURATION);
     }
-    if (isPlaying && isFaceup && !showCardInfo) {
-      setTimeout(() => {
-        setShowCardInfo(true);
-      }, 0);
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFaceup]);
+
+  if (isPlaying && isFaceup && !showCardInfo) {
+    setShowCardInfo(true);
+  }
 
   const flipCard = (event: MouseEvent<HTMLButtonElement>) => {
     if (!isPlaying || isFaceup) {
@@ -47,14 +46,6 @@ export default function Card({
     updateCardHistory?.({suit, face, setIsFaceup});
   };
 
-  if (!isPlaying) {
-    return (
-      <div className='card facedown' style={style}>
-        <div className='cardback'></div>
-      </div>
-    );
-  }
-
   const cardClasses = classnames({
     card: true,
     facedown: !isFaceup,
@@ -64,7 +55,12 @@ export default function Card({
   });
 
   return (
-    <button className='cardButton' onClick={flipCard} disabled={disabled}>
+    <button
+      className='cardButton'
+      onClick={flipCard}
+      disabled={disabled}
+      style={style}
+    >
       <div className={cardClasses}>
         <div className='cardback'></div>
         <div className='cardfront'>

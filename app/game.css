@@ -7,18 +7,62 @@
   --text-dark: #333;
   --text-dark-variant: hsl(from var(--text-dark) h s calc(l - 10));
   --play-area-height: 640px;
-  --pause-area-extra-height: 35px;
-  --play-area-width: 1024px;
-  --card-width: 105px;
-  --card-height: 130px;
+  --pause-area-extra-height: 75px;
+  /* play-area-width = 8 x card-width of 105px + 9 x gutter/gap of 16px */
+  --play-area-width: 984px;
   --card-shadow: #555;
   --card-bg-main: #36c;
   --card-bg-secondary: rgba(255, 255, 255, 0.8);
+  /*
+    these are set via style attribute in Game.tsx
+    --animation-duration
+    --card-width
+    --card-height
+  */
 }
 
-.cardframe {
+.spread {
   position: relative;
-  min-width: var(--play-area-width);
+  width: 340px;
+  height: 200px;
+  margin: 0 auto;
+}
+
+.spread .card,
+.stacked .card {
+  position: absolute;
+  top: 30px;
+  width: var(--card-width);
+  height: var(--card-height);
+  margin: 5px;
+  padding: 4px;
+  border: 1px solid var(--card-shadow);
+  border-radius: 15px;
+  box-shadow: 0 0 0 1px var(--text-dark);
+  /* background from https://projects.verou.me/css3patterns/#half-rombes */
+  background: var(--card-bg-main);
+  background:
+    linear-gradient(115deg, transparent 75%, var(--card-bg-secondary) 75%) 0 0,
+    linear-gradient(245deg, transparent 75%, var(--card-bg-secondary) 75%) 0 0,
+    linear-gradient(115deg, transparent 75%, var(--card-bg-secondary) 75%)
+      7px -15px,
+    linear-gradient(245deg, transparent 75%, rgba(255, 255, 255, 0.8) 75%)
+      7px -15px,
+    var(--card-bg-main);
+  background-size: 15px 30px;
+}
+
+.spread,
+.dealt,
+.stacked {
+  position: relative;
+  width: var(--play-area-width);
+  min-height: var(--play-area-height);
+}
+
+.stacked {
+  top: 0;
+  left: 0;
 }
 
 .overlay {
@@ -28,7 +72,7 @@
   width: 100%;
   height: calc(var(--play-area-height) + var(--pause-area-extra-height));
   z-index: 10;
-  background: var(--text-dark);
+  background: color-mix(in srgb, var(--text-dark) 80%, transparent);
   border-radius: 10px;
 
   &::after {
@@ -51,20 +95,24 @@
 .cardButton {
   width: var(--card-width);
   height: var(--card-height);
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
-.cardsWrapper {
-  /* cardsWrapper is both .cardframe and .deck */
-  transition: all 0.25s ease-in-out;
+.cardsWrapper,
+.cardsWrapper .cardButton {
+  /* cardsWrapper includes all of: .spread, .stacked, and .dealt */
+  transition: all var(--animation-duration) ease-in-out;
 }
 
-.cardframe .card {
+.dealt .card {
   position: relative;
   height: var(--card-height);
 }
 
-.cardframe .cardfront,
-.cardframe .cardback {
+.dealt .cardfront,
+.dealt .cardback {
   height: 100%;
   width: 100%;
   padding: 4px;
@@ -77,7 +125,7 @@
   transition: all var(--animation-duration) ease-in-out;
 }
 
-.cardframe .cardfront {
+.dealt .cardfront {
   background: var(--text-light-variant);
   background: radial-gradient(
     var(--text-light) 0%,
@@ -90,7 +138,7 @@
   );
 }
 
-.cardframe .cardback {
+.dealt .cardback {
   /* background from https://projects.verou.me/css3patterns/#half-rombes */
   background: var(--card-bg-main);
   background:
@@ -104,20 +152,20 @@
   background-size: 15px 30px;
 }
 
-.cardframe .facedown .cardfront,
-.cardframe .faceup .cardback {
+.dealt .facedown .cardfront,
+.dealt .faceup .cardback {
   z-index: -5;
   transform: rotateY(180deg);
 }
 
-.cardframe .facedown .cardback,
-.cardframe .faceup .cardfront {
+.dealt .facedown .cardback,
+.dealt .faceup .cardfront {
   z-index: 10;
   transform: rotateY(0deg);
 }
 
-.cardframe .face,
-.cardframe .suit {
+.dealt .face,
+.dealt .suit {
   display: block;
   width: 75%;
   margin: 0 auto;
@@ -128,55 +176,25 @@
   text-align: center;
 }
 
-.cardframe .suit {
+.dealt .suit {
   font-size: 50px;
 }
 
-.cardframe .card.facedown {
+.dealt .card.facedown {
   cursor: pointer;
 }
 
-.cardframe .card.faceup,
-.cardframe .cardButton[disabled] .card.facedown {
+.dealt .card.faceup,
+.dealt .cardButton[disabled] .card.facedown {
   cursor: default;
 }
 
-.cardframe .red {
+.dealt .red {
   color: #f00;
 }
 
-.cardframe .black {
+.dealt .black {
   color: #000;
-}
-
-.deck {
-  position: relative;
-  width: 340px;
-  height: 200px;
-  margin: 0 auto;
-}
-
-.deck .card {
-  position: absolute;
-  top: 30px;
-  width: var(--card-width);
-  height: var(--card-height);
-  margin: 5px;
-  padding: 4px;
-  border: 1px solid var(--card-shadow);
-  border-radius: 15px;
-  box-shadow: 0 0 0 1px var(--text-dark);
-  /* background from https://projects.verou.me/css3patterns/#half-rombes */
-  background: var(--card-bg-main);
-  background:
-    linear-gradient(115deg, transparent 75%, var(--card-bg-secondary) 75%) 0 0,
-    linear-gradient(245deg, transparent 75%, var(--card-bg-secondary) 75%) 0 0,
-    linear-gradient(115deg, transparent 75%, var(--card-bg-secondary) 75%)
-      7px -15px,
-    linear-gradient(245deg, transparent 75%, rgba(255, 255, 255, 0.8) 75%)
-      7px -15px,
-    var(--card-bg-main);
-  background-size: 15px 30px;
 }
 
 .score {

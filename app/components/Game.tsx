@@ -6,24 +6,17 @@ import Card from './Card';
 import Scoring from './Scoring';
 import useInterval from '../hooks/useInterval';
 import type {BaseCard, CardHistory} from '../utils/types';
-import shuffle from '../utils/shuffle';
-import spread from '../utils/spread';
-
-export const ANIMATION_DURATION = 1500;
-const ONE_SECOND = 1000;
-
-const LABELS = {
-  START: 'Start',
-  PAUSE: 'Pause',
-  RESUME: 'Resume',
-  GAME_OVER: 'Game Over',
-};
-
-const STATUSES = {PRE_START: 0, PLAYING: 1, PAUSED: 2, GAME_OVER: 3};
+import {
+  ANIMATION_DURATION,
+  ONE_SECOND,
+  LABELS,
+  STATUSES,
+  CARDS,
+} from '../utils/constants';
+import {shuffle, spread, stack, deal} from '../utils/card_actions';
 
 // TODOs:
-// - make a `deal` utility that animates from `spread` to css grid
-// - rework `Card` to handle more state internally?
+// - responsive layout for smaller viewports
 
 export default function Game() {
   const getPrecision = (value: number, precision: number = 2) => {
@@ -38,9 +31,9 @@ export default function Game() {
   const [isDisabled, setIsDisabled] = useState(false);
   const [cardHistory, setCardHistory] = useState<CardHistory[]>([]);
   const [shuffledDeck, setShuffledDeck] = useState<BaseCard[]>([]);
-  const [gameStatus, setGameStatus] = useState(STATUSES.PRE_START);
+  const [gameStatus, setGameStatus] = useState(STATUSES.INITIAL);
 
-  const isGameStarted = gameStatus > STATUSES.PRE_START;
+  const isGameStarted = gameStatus > STATUSES.INITIAL;
   const isGameActive = gameStatus === STATUSES.PLAYING;
 
   // only shuffle deck once, not once per render
@@ -48,6 +41,19 @@ export default function Game() {
     const shuffled = shuffle();
     const spreaded = spread(shuffled);
     setShuffledDeck(spreaded);
+  }
+
+  // collapsed spread deck into stacked deck after game starts,
+  // then deal out to grid only once, not once per render
+  if (gameStatus === STATUSES.STACKING) {
+    const stackedDeck = stack(shuffledDeck);
+    setShuffledDeck(stackedDeck);
+    setGameStatus(STATUSES.DEALING);
+    setTimeout(() => {
+      const dealt = deal(shuffledDeck);
+      setShuffledDeck(dealt);
+      setGameStatus(STATUSES.PLAYING);
+    }, ONE_SECOND * 1.5);
   }
 
   let clicksToMatches = getPrecision((numMatches / numClicks) * 100);
@@ -103,7 +109,7 @@ export default function Game() {
   const buttonHandler = () => {
     if (!isGameStarted) {
       // just starting
-      setGameStatus(STATUSES.PLAYING);
+      setGameStatus(STATUSES.STACKING);
       setButtonLabel(LABELS.PAUSE);
       return;
     }
@@ -111,10 +117,10 @@ export default function Game() {
       // about to pause
       setButtonLabel(LABELS.RESUME);
       setShowOverlay(true);
-      setGameStatus(STATUSES.PAUSED);
+      setGameStatus(STATUSES.PAUSING);
       return;
     }
-    if (gameStatus === STATUSES.PAUSED) {
+    if (gameStatus === STATUSES.PAUSING) {
       // about to resume
       setButtonLabel(LABELS.PAUSE);
       setGameStatus(STATUSES.PLAYING);
@@ -137,32 +143,30 @@ export default function Game() {
 
   const wrapperClasses = classnames({
     cardsWrapper: true,
-    deck: !isGameStarted,
-    'cardframe grid grid-cols-8 content-start justify-between gap-4 p-4':
-      isGameStarted,
+    spread: gameStatus === STATUSES.INITIAL,
+    stacked: gameStatus === STATUSES.STACKING,
+    dealt: gameStatus >= STATUSES.DEALING,
   });
 
   return (
     <div className='w-full'>
-      {isGameStarted && (
-        <div className='pb-4'>
-          <input
-            type='button'
-            className='button'
-            value={buttonLabel}
-            onClick={buttonHandler}
-            disabled={gameStatus === STATUSES.GAME_OVER}
-          />
-        </div>
-      )}
+      <div className='pb-4'>
+        <input
+          type='button'
+          className='button'
+          value={buttonLabel}
+          onClick={buttonHandler}
+          disabled={gameStatus === STATUSES.GAME_OVER}
+        />
+      </div>
       <div
         className={wrapperClasses}
         style={
-          isGameStarted
-            ? ({
-                '--animation-duration': `${(ANIMATION_DURATION / 2 / 1000).toFixed(2)}s`,
-              } as React.CSSProperties)
-            : undefined
+          {
+            '--animation-duration': `${(ANIMATION_DURATION / 2 / 1000).toFixed(2)}s`,
+            '--card-width': `${CARDS.WIDTH}px`,
+            '--card-height': `${CARDS.HEIGHT}px`,
+          } as React.CSSProperties
         }
       >
         {shuffledDeck.length > 0 &&
@@ -183,14 +187,6 @@ export default function Game() {
           })}
         {isGameStarted && <div className={overlayClasses}></div>}
       </div>
-      {!isGameStarted && (
-        <input
-          type='button'
-          className='button'
-          value={buttonLabel}
-          onClick={buttonHandler}
-        />
-      )}
       {isGameStarted && (
         <>
           <Scoring
