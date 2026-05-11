@@ -24,7 +24,6 @@ const STATUSES = {PRE_START: 0, PLAYING: 1, PAUSED: 2, GAME_OVER: 3};
 // TODOs:
 // - make a `deal` utility that animates from `spread` to css grid
 // - rework `Card` to handle more state internally?
-// - make 404 route
 
 export default function Game() {
   const getPrecision = (value: number, precision: number = 2) => {

@@ -1,26 +1,50 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #3b679e;
+  --action: #d5cc27;
+  --text-light: #fff;
 }
 
 body {
+  font:
+    20px/30px 'Arapey',
+    serif;
+  color: var(--text-light);
+  text-align: center;
+  min-height: 100vh;
+  padding-bottom: 15px;
   background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(
+    to bottom,
+    hsl(from var(--background) h s calc(l - 20)) 0%,
+    var(--background) 31%,
+    hsl(from var(--background) h s calc(l + 10)) 71%,
+    hsl(from var(--background) h s calc(l + 15)) 100%
+  );
+  background-repeat: no-repeat;
+}
+
+h1 {
+  font:
+    40px/50px 'Arapey',
+    sans-serif;
+  text-shadow: 0 3px 3px var(--text-dark-variant);
+}
+
+a,
+a:link {
+  text-decoration: none;
+  color: var(--action);
+  font-weight: bold;
+  text-shadow: none;
+}
+
+a:hover {
+  color: var(--action-hover);
+  text-decoration: underline;
+}
+
+.hidden {
+  display: none;
 }

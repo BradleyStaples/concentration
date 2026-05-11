@@ -16,51 +16,6 @@
   --card-bg-secondary: rgba(255, 255, 255, 0.8);
 }
 
-body {
-  font:
-    20px/30px 'Arapey',
-    serif;
-  color: var(--text-light);
-  text-align: center;
-  min-height: 100vh;
-  padding-bottom: 15px;
-  background: var(--background);
-  background: linear-gradient(
-    to bottom,
-    hsl(from var(--background) h s calc(l - 20)) 0%,
-    var(--background) 31%,
-    hsl(from var(--background) h s calc(l + 10)) 71%,
-    hsl(from var(--background) h s calc(l + 15)) 100%
-  );
-
-  background-repeat: no-repeat;
-}
-
-h1 {
-  font:
-    40px/50px 'Arapey',
-    sans-serif;
-  text-shadow: 0 3px 3px var(--text-dark-variant);
-}
-
-a,
-a:link {
-  text-decoration: none;
-  color: var(--action);
-  font-weight: bold;
-  text-shadow: none;
-}
-
-a:hover {
-  color: var(--action-hover);
-  text-decoration: underline;
-}
-
-.hidden {
-  display: none;
-}
-
-/* - - - - - CARDS - - - - - */
 .cardframe {
   position: relative;
   min-width: var(--play-area-width);

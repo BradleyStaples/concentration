@@ -1,7 +1,5 @@
-import type {Metadata} from 'next';
 import {Arapey} from 'next/font/google';
-import './globals.css';
-import './game.css';
+import '../app/globals.css';
 
 const arapey = Arapey({
   variable: '--font-arapey',
@@ -9,16 +7,10 @@ const arapey = Arapey({
   subsets: ['latin'],
 });
 
-export const metadata: Metadata = {
-  title: 'Concentration',
-  description: 'Concentration by Bradley Staples',
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{children: React.ReactNode}>) {
+export default function Custom404() {
   return (
     <html lang='en'>
+      {/* eslint-disable-next-line @next/next/no-head-element */}
       <head>
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script src='http://localhost:8097'></script>
@@ -34,7 +26,7 @@ export default function RootLayout({
                 </span>
               </h1>
             </div>
-            {children}
+            <h1>404 - Not Found</h1>
           </main>
         </div>
       </body>
