@@ -14,7 +14,7 @@ import {
   STATUSES,
   CARDS,
 } from '../utils/constants';
-import {shuffle, spread, stack, deal} from '../utils/card_actions';
+import {shuffle, spread, stack, deal} from '../utils/cardActions';
 
 // TODOs:
 // - responsive layout for smaller viewports

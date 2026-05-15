@@ -231,9 +231,13 @@
   text-transform: uppercase;
 }
 
-.button:hover,
-.button:focus,
-.button:active {
+.button:not(:disabled):hover,
+.button:not(:disabled):focus,
+.button:not(:disabled):active {
   border: 1px solid var(--action);
   background: linear-gradient(var(--action), var(--action-hover));
+}
+
+.button:disabled {
+  cursor: default;
 }
