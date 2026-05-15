@@ -5,7 +5,8 @@ import classnames from 'classnames';
 import Card from './Card';
 import Scoring from './Scoring';
 import useInterval from '../hooks/useInterval';
-import type {BaseCard, CardHistory} from '../utils/types';
+import useCardHistory from '../hooks/useCardHistory';
+import type {BaseCard} from '../utils/types';
 import {
   ANIMATION_DURATION,
   ONE_SECOND,
@@ -17,6 +18,7 @@ import {shuffle, spread, stack, deal} from '../utils/card_actions';
 
 // TODOs:
 // - responsive layout for smaller viewports
+// - left-align button at game start, then center after
 
 export default function Game() {
   const getPrecision = (value: number, precision: number = 2) => {
@@ -26,15 +28,25 @@ export default function Game() {
   const [showOverlay, setShowOverlay] = useState(false);
   const [numClicks, setNumClicks] = useState(0);
   const [numSeconds, setNumSeconds] = useState(0);
-  const [numMatches, setNumMatches] = useState(0);
   const [endStats, setEndStats] = useState('');
   const [isDisabled, setIsDisabled] = useState(false);
-  const [cardHistory, setCardHistory] = useState<CardHistory[]>([]);
   const [shuffledDeck, setShuffledDeck] = useState<BaseCard[]>([]);
   const [gameStatus, setGameStatus] = useState(STATUSES.INITIAL);
 
   const isGameStarted = gameStatus > STATUSES.INITIAL;
   const isGameActive = gameStatus === STATUSES.PLAYING;
+
+  const {
+    cardHistory,
+    numMatches,
+    allMatchesFound,
+    updateCardHistory,
+    checkForMatch,
+  } = useCardHistory({
+    numberOfCards: shuffledDeck.length,
+    isGameActive,
+    setIsDisabled,
+  });
 
   // only shuffle deck once, not once per render
   if (shuffledDeck.length === 0) {
@@ -69,41 +81,18 @@ export default function Game() {
     setEndStats(template);
   }
 
-  if (isGameActive && numMatches === shuffledDeck.length / 2) {
-    // game is over, all matches found
+  if (allMatchesFound) {
     setGameStatus(STATUSES.GAME_OVER);
     setButtonLabel(LABELS.GAME_OVER);
   }
 
   if (cardHistory.length === 2) {
-    // compare new card to existing card for a match
-    const oldCard = cardHistory[0];
-    const newCard = cardHistory[1];
-    if (oldCard.suit === newCard.suit && oldCard.face === newCard.face) {
-      setNumMatches((numMatches) => numMatches + 1);
-    } else {
-      // not a match; disable while faceup, return to facedown
-      setIsDisabled(true);
-      setTimeout(() => {
-        oldCard.setIsFaceup(false);
-        newCard.setIsFaceup(false);
-        setIsDisabled(false);
-      }, ANIMATION_DURATION);
-    }
-    // reset history
-    setCardHistory([]);
+    checkForMatch();
   }
 
   const clickIncrementor = () => {
     if (!isGameActive) return;
     setNumClicks(numClicks + 1);
-  };
-
-  const updateCardHistory = (newHistory: CardHistory) => {
-    if (!isGameActive) return;
-    if (cardHistory.length <= 1) {
-      setCardHistory((cardHistory) => cardHistory.concat(newHistory));
-    }
   };
 
   const buttonHandler = () => {
