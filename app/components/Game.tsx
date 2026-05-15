@@ -18,7 +18,6 @@ import {shuffle, spread, stack, deal} from '../utils/cardActions';
 
 // TODOs:
 // - responsive layout for smaller viewports
-// - left-align button at game start, then center after
 
 export default function Game() {
   const getPrecision = (value: number, precision: number = 2) => {
@@ -137,12 +136,17 @@ export default function Game() {
     dealt: gameStatus >= STATUSES.DEALING,
   });
 
+  const buttonClasses = classnames({
+    button: true,
+    start: gameStatus === STATUSES.INITIAL,
+  });
+
   return (
     <div className='w-full'>
       <div className='pb-4'>
         <input
           type='button'
-          className='button'
+          className={buttonClasses}
           value={buttonLabel}
           onClick={buttonHandler}
           disabled={gameStatus === STATUSES.GAME_OVER}
